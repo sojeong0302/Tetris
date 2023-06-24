@@ -51,13 +51,13 @@ function prependNewLine() {
     playground.prepend(li);
 }
 
-function renderBlocks() {
+function renderBlocks(moveType="") {
     const { type, direction, top, left } = tempMovingItem;
     const movingBlocks = document.querySelectorAll(".moving")
     movingBlocks.forEach(moving => {
         moving.classList.remove(type, "moving");
     })
-    BLOCKS[type][direction].forEach(block => {
+    BLOCKS[type][direction].some(block => {
         const x = block[0] + left;
         const y = block[1] + top;
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
@@ -72,6 +72,7 @@ function renderBlocks() {
                     seizeBlock();
                 }
             }, 0)
+            return true;
         }
     })
     movingItem.left=left;
@@ -79,13 +80,27 @@ function renderBlocks() {
     movingItem.direction=direction;
 }
 
-//맨 밑에서 더 이상 갈 곳이 없을때 처리할 코
+//맨 밑에서 더 이상 갈 곳이 없을때 처리할 코드
 function seizeBlock(){
-    console.log('seize block')
+    const movingBlocks = document.querySelectorAll(".moving")
+    movingBlocks.forEach(moving => {
+        moving.classList.remove("moving");
+        moving.classList.add("seized");
+    })
+    generateNewBlock();
+}
+
+//새로운 아이템 생기게 해줌
+function generateNewBlock(){
+    movingItem.top=0;
+    movingItem.left=3;
+    movingItem.direction=0;
+    tempMovingItem={ ...movingItem };
+    renderBlocks();
 }
 
 function checkEmpty(target) {
-    if (!target) {
+    if (!target || target.classList.contains("seized")) {
         return false;
     }
     return true;
@@ -97,7 +112,7 @@ function moveBlock(moveType, amount) {
 function chageDirection(){
     const direction=tempMovingItem.direction;
     direction === 3 ? tempMovingItem.direction=0:tempMovingItem.direction+=1;
-    renderBlocks
+    renderBlocks()
 }
 
 //방향키로 top랑 left 증가시키기
