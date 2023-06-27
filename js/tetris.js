@@ -1,3 +1,5 @@
+import BLOCKS from "./blocks.js"
+
 //Dom
 const playground = document.querySelector(".playground>ul");
 
@@ -11,19 +13,9 @@ let duration = 500;//블록이 떨어지는 시간
 let downInterval;
 let tempMovingItem;//잠깐 담아두는 용도
 
-const BLOCKS = {
-    //뻐큐
-    tree: [
-        [[2, 1], [0, 1], [1, 0], [1, 1]],
-        [[1, 2], [0, 1], [1, 0], [1, 1]],
-        [[1, 2], [0, 1], [2, 1], [1, 1]],
-        [[2, 1], [1, 2], [1, 0], [1, 1]],
-    ]
-}
-
 const movingItem = {
-    type: "tree",
-    direction: 1,//화살표를 눌렀을때 방향을 돌려주는 역할
+    type: "",
+    direction: 3,//화살표를 눌렀을때 방향을 돌려주는 역할
     //화살표를 통해 top와 left의 값을 증가 시켜야함
     top: 0,
     left: 0,
@@ -33,11 +25,12 @@ init();
 
 //처음 시작
 function init() {
+
     tempMovingItem = { ...movingItem };
     for (let i = 0; i < GAME_ROWS; i++) {
         prependNewLine();
     }
-    renderBlocks();
+    generateNewBlock();
 }
 
 function prependNewLine() {
@@ -60,6 +53,7 @@ function renderBlocks(moveType="") {
     BLOCKS[type][direction].some(block => {
         const x = block[0] + left;
         const y = block[1] + top;
+        console.log(playground.childNodes[y])
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
         const isAvailable = checkEmpty(target);
         if (isAvailable) {
@@ -92,11 +86,18 @@ function seizeBlock(){
 
 //새로운 아이템 생기게 해줌
 function generateNewBlock(){
+    clearInterval(downInterval);
+    downInterval=setInterval(()=>{
+        moveBlock('top',1)
+    },duration)
+    const blockArray=Object.entries(BLOCKS);
+    const randomIndex=Math.floor(Math.random()*blockArray.length)
+    movingItem.type=blockArray[randomIndex][0]
     movingItem.top=0;
     movingItem.left=3;
     movingItem.direction=0;
     tempMovingItem={ ...movingItem };
-    renderBlocks();
+    renderBlocks()
 }
 
 function checkEmpty(target) {
@@ -107,7 +108,7 @@ function checkEmpty(target) {
 }
 function moveBlock(moveType, amount) {
     tempMovingItem[moveType] += amount;
-    renderBlocks()
+    renderBlocks(moveType)
 }
 function chageDirection(){
     const direction=tempMovingItem.direction;

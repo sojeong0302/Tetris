@@ -40,6 +40,21 @@ body {
     outline: 1px solid #ccc;
 }
 
-.tree{
+.square{
     background: #67c23a;
+}
+.bar{
+    background: salmon;
+}
+.tree{
+    background: #3a43c2;
+}
+.zee{
+    background: #e6a23c;
+}
+.elLeft{
+    background: #8e44ad;
+}
+.elRight{
+    background: #16a085;
 }
