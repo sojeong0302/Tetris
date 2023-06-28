@@ -2,6 +2,8 @@ import BLOCKS from "./blocks.js"
 
 //Dom
 const playground = document.querySelector(".playground>ul");
+const gameText = document.querySelector(".game-text")
+const scoreDisplay = document.querySelector(".score")
 
 //Setting
 const GAME_ROWS = 20;
@@ -60,8 +62,12 @@ function renderBlocks(moveType="") {
             target.classList.add(type, "moving")
         } else {
             tempMovingItem = { ...movingItem }
+            if(moveType==='retry'){
+                chearInterval(downInterval)
+                showGameoverText()
+            }
             setTimeout(() => {
-                renderBlocks();
+                renderBlocks('retry');
                 if(moveType==="top"){
                     seizeBlock();
                 }
@@ -81,9 +87,24 @@ function seizeBlock(){
         moving.classList.remove("moving");
         moving.classList.add("seized");
     })
-    generateNewBlock();
+    checkMatch()
 }
-
+function checkMatch(){
+    const childNodes=playground.childNodes;
+    childNodes.forEach(child=>{
+        let matched=true;
+        child.children[0].childNodes.forEach(li=>{
+            if(!li.classList.contains("seized")){
+                matched=false;
+            }
+        })
+        if(matched){
+            child.remove();
+            prependNewLine();
+        }
+    })
+    generateNewBlock()
+}
 //새로운 아이템 생기게 해줌
 function generateNewBlock(){
     clearInterval(downInterval);
@@ -116,6 +137,17 @@ function chageDirection(){
     renderBlocks()
 }
 
+//스페이스바 눌렀을 때 처리
+function dropBlock(){
+    clearInterval(downInterval)
+    downInterval=setInterval(()=>{
+        moveBlock("top",1)
+    },10)
+}
+
+function showGameoverText(){
+    gameText.style.display="flex"
+}
 //방향키로 top랑 left 증가시키기
 document.addEventListener("keydown", e => {
     switch (e.keyCode) {
@@ -130,6 +162,10 @@ document.addEventListener("keydown", e => {
             break;
         case 38:
             chageDirection();
+            break;
+        case 32:
+            //스페이스바
+            dropBlock();
             break;
         default:
             break;
