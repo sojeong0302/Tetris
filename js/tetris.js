@@ -4,6 +4,7 @@ import BLOCKS from "./blocks.js"
 const playground = document.querySelector(".playground>ul");
 const gameText = document.querySelector(".game-text")
 const scoreDisplay = document.querySelector(".score")
+const restartButton = document.querySelector(".game-text > button")
 
 //Setting
 const GAME_ROWS = 20;
@@ -55,7 +56,6 @@ function renderBlocks(moveType="") {
     BLOCKS[type][direction].some(block => {
         const x = block[0] + left;
         const y = block[1] + top;
-        console.log(playground.childNodes[y])
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null;
         const isAvailable = checkEmpty(target);
         if (isAvailable) {
@@ -63,7 +63,7 @@ function renderBlocks(moveType="") {
         } else {
             tempMovingItem = { ...movingItem }
             if(moveType==='retry'){
-                chearInterval(downInterval)
+                clearInterval(downInterval)
                 showGameoverText()
             }
             setTimeout(() => {
@@ -101,6 +101,8 @@ function checkMatch(){
         if(matched){
             child.remove();
             prependNewLine();
+            score++;
+            scoreDisplay.innerText=score;
         }
     })
     generateNewBlock()
@@ -170,4 +172,10 @@ document.addEventListener("keydown", e => {
         default:
             break;
     }
+})
+
+restartButton.addEventListener("click",()=>{
+    playground.innerHTML="";
+    gameText.style.display="none"
+    init()
 })
