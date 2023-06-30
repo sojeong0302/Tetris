@@ -174,8 +174,10 @@ document.addEventListener("keydown", e => {
     }
 })
 
-restartButton.addEventListener("click",()=>{
-    playground.innerHTML="";
-    gameText.style.display="none"
-    init()
-})
+restartButton.addEventListener("click", () => {
+    playground.innerHTML = "";
+    gameText.style.display = "none";
+    score = 0; // Reset the score to 0
+    scoreDisplay.innerText = score; // Update the score display
+    init();
+});
